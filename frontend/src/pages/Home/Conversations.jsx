@@ -3,25 +3,27 @@ import { FaSearch } from "react-icons/fa";
 import { IoIosSend} from "react-icons/io";
 import { BiLogOut } from "react-icons/bi";
 import { SelectedUserContext } from '../../contexts/selectedUserContext';
-import { sendMessage } from '../../controllers/message';
-const Conversation = () => {
+import { AuthContext } from '../../contexts/AuthContext';
+import {useSendMessage} from '../../hooks/useSendMessage';
+
+const Conversations = () => {
 
     const {selectedUser,setSelectedUser,conversations,setConversations}= useContext(SelectedUserContext)
+    const {currentUser, setCurrentUser} = useContext(AuthContext)
     const [message,setMessage] = useState('')
 
-    const onSendMessage = () => {
+    const {sendMessage} = useSendMessage();
+
+    const onSendMessage = async() => {
         if(message === '') return
-        let id = selectedUser._id
-        sendMessage({id,message}).then((response)=>{
-            setConversations([...conversations,response.newMessage])
-            setMessage('')
-        })
+        await sendMessage({message})
+        setMessage('')
     }
 
 
   return (
     
-    <div className='flex flex-col justify-between items-center w-full h-full'>
+    <div className='flex flex-col justify-between items-center w-full h-full md:min-w-[450px]'>
         <div className='w-full p-4 bg-gray-400 flex'>
             <p>To:</p>
             <p className='font-black mx-2'>{selectedUser.name}</p>
@@ -35,12 +37,11 @@ const Conversation = () => {
                             <p>{conversation.message}</p>
                         </div>:
                         <div className='flex justify-end items-center  gap-2 m-4 p-4 bg-gray-700 text-white rounded-xl'>
-                            <img src={selectedUser.profilePic} alt=""notfound className='object-cover h-10 w-10'/>
+                            <img src={currentUser.profilePic} alt=""notfound className='object-cover h-10 w-10'/>
                             <p>{conversation.message}</p>
                         </div>
                     }
                 </div>
-                
             ))}
         </div>
         <div className='bg-gray-700 w-[90%] m-4 p-4  flex justify-between items-center overflow-hidden border-black border-2 rounded-xl'>
@@ -52,4 +53,4 @@ const Conversation = () => {
   )
 }
 
-export default Conversation;
+export default Conversations;

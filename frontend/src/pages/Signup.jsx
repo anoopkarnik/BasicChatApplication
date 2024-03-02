@@ -1,12 +1,10 @@
 import React,{useState} from 'react'
 import { useNavigate } from 'react-router-dom'
-import { signup } from '../controllers/auth'
 import Button from '../components/Button'
 import Heading from '../components/Heading'
 import Input from '../components/Input'
 import Radio from '../components/Radio'
-import {CurrentUserContext} from '../contexts/currentUserContext'
-import { useContext } from 'react'
+import useSignup from '../hooks/useSignup'
 
 const Signup = () => {
     const [username, setUsername] = useState('')
@@ -17,8 +15,7 @@ const Signup = () => {
     const [gender, setGender] = useState('')
     const navigate = useNavigate()
 
-
-    const {currentUser, setCurrentUser} = useContext(CurrentUserContext)
+    const {loading,signup} = useSignup()
     
 
     const onGenderChange = (event) =>{
@@ -27,15 +24,13 @@ const Signup = () => {
 
 
     const onSignup = async () =>{
-        const response = await signup({name, username, password, confirmPassword, gender})
-        setCurrentUser(response)
-        localStorage.setItem('token', response.token)
-        navigate('/')
+        await signup({name, username, password, confirmPassword, gender})
     }
 
   return (
-    <div className='flex items-center justify-center w-full h-screen'>
-    <div className='flex flex-col justify-center w-[40%] h-[80%] bg-gray-400 gap-10 border-2 border-black'>
+    <div className='flex flex-col items-center justify-center mx-auto min-w-96 h-full w-[30%]'>
+    <div className='justify-center w-full bg-gray-400 bg-clip-padding backdrop-filter 
+    backdrop-blur-lg bg-opacity-0 shadow-md '>
         <Heading text='Signup ChatApp'/>
         <Input onChange={e => setName(e.target.value)} placeholder='Enter name' label='name' type="text"/>
         <Input onChange={e => setUsername(e.target.value)} placeholder='Enter email' label='Username' type="text"/>
@@ -49,7 +44,6 @@ const Signup = () => {
             </div>
             <Button text='Signup' onClick={onSignup}/>
         </div>
-        
     </div>
 </div>
   )

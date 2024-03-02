@@ -2,10 +2,9 @@ import React,{useState} from 'react'
 import Heading from '../components/Heading'
 import Input from '../components/Input'
 import Button from '../components/Button'
-import { signin } from '../controllers/auth'
 import { useNavigate } from 'react-router-dom'
-import {CurrentUserContext} from '../contexts/currentUserContext'
-import { useContext } from 'react'
+import useSignin from '../hooks/useSignin'
+
 
 const Signin = () => {
 
@@ -13,19 +12,16 @@ const Signin = () => {
     const [password, setPassword] = useState('')
     const navigate = useNavigate()
 
-    const {currentUser, setCurrentUser} = useContext(CurrentUserContext)
-
+    const {loading,signin} = useSignin()
 
     const onSignin = async () =>{
-        const response = await signin({username,password})
-        setCurrentUser(response)
-        localStorage.setItem('token', response.token)
-        navigate('/')
+        await signin(username,password)
     }
 
   return (
-    <div className='flex items-center justify-center w-full h-screen'>
-    <div className='flex flex-col justify-center w-[40%] h-[60%] bg-gray-400 gap-10 border-2 border-black'>
+    <div className='flex flex-col items-center justify-center mx-auto min-w-96 h-full w-[30%]'>
+    <div className='justify-center w-full bg-gray-400 bg-clip-padding backdrop-filter 
+    backdrop-blur-lg bg-opacity-0 shadow-md '>
         <Heading text='Login ChatApp'/>
         <Input onChange={e => setUsername(e.target.value)} placeholder='Enter email' label='Username' type="text"/>
         <Input onChange={e => setPassword(e.target.value)} placeholder='Enter password' label='Password' type="password"/>

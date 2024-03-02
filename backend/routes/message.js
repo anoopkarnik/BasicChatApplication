@@ -10,7 +10,7 @@ router.post('/send/:id', async(req,res)=>{
         const {message} = req.body;
         const senderId = req.userId
         let conversation = await Conversation.findOne({participants: {$all: [senderId, receiverId]}});
-        if (!conversation){
+        if (!conversation || conversation.messages.length === 0){
             Conversation.create({participants: [senderId, receiverId]});
         }
         const newMessage = await Message.create({senderId,receiverId, message});

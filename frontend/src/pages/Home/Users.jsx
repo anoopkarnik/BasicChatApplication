@@ -9,7 +9,8 @@ import useLogout from '../../hooks/useLogout';
 import { useGetUsers } from '../../hooks/useGetUsers';
 import { UsersContext } from '../../contexts/UsersContext';
 import {useGetConversation } from '../../hooks/useGetConversation';
-
+import { SocketContext } from '../../contexts/SocketContext';
+import User from './User';
 const Users = () => {
 
     const navigate = useNavigate()
@@ -18,6 +19,7 @@ const Users = () => {
     const {conversations,setConversations,selectedUser, setSelectedUser}= useContext(SelectedUserContext)
     const {currentUser, setCurrentUser} = useContext(AuthContext)
     const {users,setUsers} = useContext(UsersContext)
+
 
     const {loading,getUsers} = useGetUsers();
     const { getConversation} = useGetConversation();
@@ -50,15 +52,7 @@ const Users = () => {
                 {users.filter(user => user.name.startsWith(filter))
                 .filter(user => user._id !== currentUser._id)
                 .map((user,index)=>(
-                    <div onClick={e=> setSelectedUser(user)} key={index} 
-                    className={`flex justify-between items-center w-full p-2 text-white border-b-[1px]border-white
-                    hover:bg-violet-500 hover:cursor-pointer ${selectedUser._id === user._id ? 'bg-violet-300' : ''}`}>
-                        <div className='flex items-center justify-start gap-2'>
-                            <img src={user.profilePic} alt=""notfound className='object-cover h-10 w-10'/>
-                            <p >{user.name}</p>
-                        </div>
-                        <IoIosSend className='text-3xl'/>
-                    </div>
+                    <User user={user}/>
                 ))}
             </div>
         </div>

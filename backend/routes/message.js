@@ -1,7 +1,9 @@
 const express = require('express');
 const {Conversation, Message} = require('../models/db');
+const { getReceiverSocketId } = require('../utils/socket');
 const router = express.Router();
 require('dotenv').config();
+const {io} = require('../utils/socket');
 
 
 router.post('/send/:id', async(req,res)=>{
@@ -17,6 +19,13 @@ router.post('/send/:id', async(req,res)=>{
         if (newMessage){
             conversation.messages.push(newMessage._id);
             await conversation.save();
+        }
+
+        const receiverSocketId = getReceiverSocketId(receiverId);
+        if (receiverSocketId){
+            console.log('Emitting new message to receiver',receiverSocketId);
+
+            io.to(receiverSocketId).emit('newMessage',newMessage);
         }
         res.json({newMessage});
 

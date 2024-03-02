@@ -1,13 +1,15 @@
-const express = require('express');
+
 const cors = require('cors'); 
 const rootRouter = require('./routes/root');
 const {rateLimiter, errorFunction, authMiddleware} = require('./middlewares/middlewares');
 require('dotenv').config();
 
+const express = require('express');
 
 const PORT = process.env.PORT || 3000;
 
-const app = express();
+const { app, server } = require("./utils/socket.js");
+
 
 app.use(cors());
 app.use(express.json());
@@ -19,7 +21,7 @@ app.use('/api/v1/message',authMiddleware)
 app.use('/api/v1', rootRouter);
 app.use(errorFunction);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log('Server is running on port 3000');
 })
 
